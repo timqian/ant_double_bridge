@@ -8,6 +8,8 @@ var random = new Random(Random.engines.mt19937().autoSeed());
 */
 export default function (p0=1, p1=1, p2=1, p3=1) {
 	let sum = p0 + p1 + p2 + p3;
+
+	// sum < 9007199254740992
 	let ran = random.integer(1, sum);
 	if (ran <= p0) {
 		return {dx:1, dy:0};

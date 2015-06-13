@@ -23,17 +23,17 @@ Ants.update = function(Phero, C=CONFIG) {
 		p3 = Phero[ant.x][ant.y+1];
 		p4 = Phero[ant.x][ant.y-1];
 
+  	// prevent backwards and encourage forward
+  	if (ant.dx === 1 && ant.dy === 0) {p2 = 0; p1 = p1 * 4;}
+  	else if (ant.dx === -1 && ant.dy === 0) {p1 = 0; p2 = p2 * 4;}
+		else if (ant.dx === 0 && ant.dy === 1) {p4 = 0; p3 = p3 * 4;}
+		else {p3 = 0; p4 = p4 * 4;}
+
 		// if ant going into wall, set P to 0(prevent)
 		if (ant.x === 1 || ant.x === C.WALL.x + 1) {p2 = 0;}
 		if (ant.x === C.STAGE_SIZE || ant.x === C.WALL.x - 1) {p1 = 0;}
 		if (ant.y === 1 || ant.y === C.WALL.y[1] + 1) {p4 = 0;}
 		if (ant.y === C.STAGE_SIZE || ant.y === C.WALL.y[0] - 1) {p3 = 0;}
-
-  	// prevent backwards 
-  	if (ant.dx === 1 && ant.dy === 0) {p2 = 0;}
-  	else if (ant.dx === -1 && ant.dy === 0) {p1 = 0;}
-		else if (ant.dx === 0 && ant.dy === 1) {p4 = 0;}
-		else {p3 = 0;}
 
 		ant.crawl(p1, p2, p3, p4);
 

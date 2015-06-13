@@ -1,61 +1,58 @@
 import Ants from './Ants.js';
 import Phero from './Phero.js';
-import PIXI from 'pixi';
+import PIXI from '../pixi.js';
 import CONFIG from './CONFIG.js';
 
-Ants.update(Phero);
+// You can use either `new PIXI.WebGLRenderer`, `new PIXI.CanvasRenderer`, or `PIXI.autoDetectRenderer`
+// which will try to choose the best renderer for the environment you are in.
+var renderer = new PIXI.WebGLRenderer(800, 600);
 
-// make 'requestAnimFrame' work
-window.requestAnimFrame = function(){
-  return (
-    window.requestAnimationFrame       || 
-    window.webkitRequestAnimationFrame || 
-    window.mozRequestAnimationFrame    || 
-    window.oRequestAnimationFrame      || 
-    window.msRequestAnimationFrame     || 
-    function(/* function */ callback){
-        window.setTimeout(callback, 1000 / 60);
-    }
-  );
-}();
-
-
-// create an new instance of a pixi stage
-var stage = new PIXI.Stage(0x66FF99);
-
-// create a renderer instance
-var renderer = PIXI.autoDetectRenderer(CONFIG.STAGE_SIZE);
-
-// add the renderer view element to the DOM
+// The renderer will create a canvas element for you that you can then insert into the DOM.
 document.body.appendChild(renderer.view);
 
-requestAnimFrame( animate );
+// You need to create a root container that will hold the scene you want to draw.
+var stage = new PIXI.ParticleContainer();
 
-// create a texture from an image path
-var texture = PIXI.Texture.fromImage('bunny.png');
-// create a new Sprite using the texture
-for (let i = 0; i < Ants.length; i++) {
+// Setup the position and scale of the bunny
+var antSprites = [];
+for (let i = 0; i < CONFIG.ANT_NUM; i++) {
+  var sprite = new PIXI.Sprite.fromImage("bunny.png");
+  sprite.position.x = Ants[i].x;
+  sprite.position.y = Ants[i].y;
+  antSprites.push(sprite);
+// Add the sprite to the scene 
+  stage.addChild(sprite);
+}
 
-};
-var bunny = new PIXI.Sprite(texture);
-
-// center the sprites anchor point
-bunny.anchor.x = 0.5;
-bunny.anchor.y = 0.5;
-
-// move the sprite t the center of the screen
-bunny.position.x = 200;
-bunny.position.y = 150;
-
-stage.addChild(bunny);
+// kick off the animation loop (defined below)
+animate();
 
 function animate() {
+    // start the timer for the next animation loop
+    requestAnimationFrame(animate);
+    Ants.update(Phero);
+    for (let i = 0; i < CONFIG.ANT_NUM; i++) {
+      sprite = antSprites[i];
+      sprite.position.x = Ants[i].x;
+      sprite.position.y = Ants[i].y;
+    }
+    console.log(antSprites.length)
 
-    requestAnimFrame( animate );
-
-    // just for fun, lets rotate mr rabbit a little
-    bunny.rotation += 0.1;
-	
-    // render the stage   
+    // this is the main render call that makes pixi draw your container and its children.
     renderer.render(stage);
 }
+
+
+// // make 'requestAnimFrame' work
+// window.requestAnimFrame = function(){
+//   return (
+//     window.requestAnimationFrame       || 
+//     window.webkitRequestAnimationFrame || 
+//     window.mozRequestAnimationFrame    || 
+//     window.oRequestAnimationFrame      || 
+//     window.msRequestAnimationFrame     || 
+//     function(/* function */ callback){
+//         window.setTimeout(callback, 1000 / 60);
+//     }
+//   );
+// }();
